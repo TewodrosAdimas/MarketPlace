@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "users",
+    "carts",
     "products",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -147,4 +148,4 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "yosefenadagim@gmail.com"
-EMAIL_HOST_PASSWORD = "bqomfbilocqnwszl"
+EMAIL_HOST_PASSWORD = "****************"

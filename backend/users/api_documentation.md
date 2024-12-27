@@ -1,21 +1,25 @@
 ### **1. User Registration (`POST /register/`)**
 
 #### **Description**:
+
 Registers a new user as either a **seller** or **buyer**. For sellers, the account is deactivated and requires admin approval. For buyers, a verification code is sent via email to activate the account.
 
 #### **Request**:
+
 - **Method**: `POST`
 - **Endpoint**: `/register/`
 - **Request Body**:
   ```json
   {
+    "username": "tew",
     "email": "user@example.com",
     "password": "strong_password",
-    "user_type": "buyer"  // or "seller"
+    "user_type": "buyer" // or "seller"
   }
   ```
 
 #### **Response**:
+
 - **Status**: `201 Created`
 - **Response Body**:
   ```json
@@ -25,10 +29,12 @@ Registers a new user as either a **seller** or **buyer**. For sellers, the accou
   ```
 
 #### **Errors**:
+
 - **Status**: `400 Bad Request`
   - **Response Body**:
     ```json
     {
+      "username": ["This field is required."],
       "email": ["This field is required."],
       "password": ["This field is required."],
       "user_type": ["This field is required."]
@@ -40,9 +46,11 @@ Registers a new user as either a **seller** or **buyer**. For sellers, the accou
 ### **2. Login (`POST /login/`)**
 
 #### **Description**:
+
 Logs in a user using **email** and **password**, and returns JWT tokens (`access` and `refresh` tokens).
 
 #### **Request**:
+
 - **Method**: `POST`
 - **Endpoint**: `/login/`
 - **Request Body**:
@@ -54,6 +62,7 @@ Logs in a user using **email** and **password**, and returns JWT tokens (`access
   ```
 
 #### **Response**:
+
 - **Status**: `200 OK`
 - **Response Body**:
   ```json
@@ -64,6 +73,7 @@ Logs in a user using **email** and **password**, and returns JWT tokens (`access
   ```
 
 #### **Errors**:
+
 - **Status**: `400 Bad Request`
   - **Response Body**:
     ```json
@@ -77,14 +87,17 @@ Logs in a user using **email** and **password**, and returns JWT tokens (`access
 ### **3. Logout (`POST /logout/`)**
 
 #### **Description**:
+
 Logs out the user by instructing the client to discard the JWT token (tokens are stateless, so no server-side session needs to be cleared).
 
 #### **Request**:
+
 - **Method**: `POST`
 - **Endpoint**: `/logout/`
 - **Authorization**: `Bearer <access_token>` (Add the access token in the `Authorization` header as a bearer token).
 
 #### **Response**:
+
 - **Status**: `200 OK`
 - **Response Body**:
   ```json
@@ -95,12 +108,14 @@ Logs out the user by instructing the client to discard the JWT token (tokens are
 
 ---
 
-### **4. Admin Approval of Seller (`POST /admin/approve-seller/`)** *(Optional: For admin approval of sellers)*
+### **4. Admin Approval of Seller (`POST /admin/approve-seller/`)** _(Optional: For admin approval of sellers)_
 
 #### **Description**:
+
 This endpoint would be used by an **admin** to approve sellers who are registered but waiting for admin approval. For simplicity, this endpoint is optional and may not be required if you are handling approval in another manner (e.g., via the Django Admin interface).
 
 #### **Request**:
+
 - **Method**: `POST`
 - **Endpoint**: `/admin/approve-seller/`
 - **Request Body**:
@@ -111,6 +126,7 @@ This endpoint would be used by an **admin** to approve sellers who are registere
   ```
 
 #### **Response**:
+
 - **Status**: `200 OK`
 - **Response Body**:
   ```json
@@ -124,10 +140,12 @@ This endpoint would be used by an **admin** to approve sellers who are registere
 ### **Authentication for Endpoints**
 
 #### **JWT Authentication**:
+
 - All endpoints except for **`/register/`** are protected and require the client to authenticate using the JWT access token.
 - The access token is passed in the request header as a **Bearer token**.
 
 #### **Example of Authorization Header**:
+
 ```http
 Authorization: Bearer <your_jwt_access_token>
 ```
@@ -160,27 +178,5 @@ Authorization: Bearer <your_jwt_access_token>
 - **Login**: `/login/` (POST)
 - **Logout**: `/logout/` (POST)
 - **Admin Approval of Seller**: `/admin/approve-seller/` (POST)
-
----
-
-### **How to Test Using Postman**
-
-1. **Register a User**:
-   - **Endpoint**: `POST /register/`
-   - **Request Body**: Provide email, password, and user type (buyer/seller).
-   - **Response**: Success message on registration.
-
-2. **Login**:
-   - **Endpoint**: `POST /login/`
-   - **Request Body**: Provide email and password.
-   - **Response**: Get `access` and `refresh` tokens.
-
-3. **Access Protected Endpoints**:
-   - Use the access token in the `Authorization` header as `Bearer <access_token>` to access protected routes.
-
-4. **Logout**:
-   - **Endpoint**: `POST /logout/`
-   - **Authorization**: Use `Bearer <access_token>` in the `Authorization` header.
-   - **Response**: Success message confirming logout.
 
 ---
