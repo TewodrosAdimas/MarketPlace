@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import axios, { AxiosError } from "axios";
 import "./RegisterForm.css";
-import { AxiosError } from "axios";
 
 type UserType = "buyer" | "seller";
 
@@ -10,10 +10,6 @@ type FormData = {
   email: string;
   password: string;
   user_type: UserType;
-};
-
-type ApiResponse = {
-  message: string;
 };
 
 type ApiError = {
@@ -28,77 +24,98 @@ const RegisterForm: React.FC = () => {
     user_type: "buyer",
   });
 
-  const [errorMessages, setErrorMessages] = useState<ApiError | null>(null);
+  const [errorMessages, setErrorMessages] = useState<ApiError>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
+
+  const validateUsername = (username: string) => {
+    if (!username.trim()) {
+      return "Username is required.";
+    }
+    return null;
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[\w.%+-]+@[\w.-]+\.[a-zA-Z]{2,}$/i;
+    if (!email.trim()) {
+      return "Email is required.";
+    } else if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
+    }
+    return null;
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password || password.length < 8) {
+      return "Password must be at least 8 characters long.";
+    }
+    return null;
+  };
+
+  const validateUserType = (userType: UserType) => {
+    if (!["buyer", "seller"].includes(userType)) {
+      return "User type must be either 'buyer' or 'seller'.";
+    }
+    return null;
+  };
+
+  const handleValidation = (field: keyof FormData, value: string) => {
+    let error = null;
+    switch (field) {
+      case "username":
+        error = validateUsername(value);
+        break;
+      case "email":
+        error = validateEmail(value);
+        break;
+      case "password":
+        error = validatePassword(value);
+        break;
+      case "user_type":
+        error = validateUserType(value as UserType);
+        break;
+    }
+
+    setErrorMessages((prev) => {
+      const updatedErrors = { ...prev };
+      if (error) {
+        updatedErrors[field] = [error];
+      } else {
+        delete updatedErrors[field];
+      }
+      return updatedErrors;
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-
-    // Call validation function after each input change
-    validateForm();
-  };
-
-  // Validate form fields in real-time
-  const validateForm = (): void => {
-    const errors: ApiError = {};
-    
-    // Username validation
-    if (!formData.username) {
-      errors.username = ["Username is required."];
-    }
-
-    // Email validation (basic format check)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email) {
-      errors.email = ["Email is required."];
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = ["Please enter a valid email address."];
-    }
-
-    // Password validation (min 8 characters, 1 uppercase, 1 number, 1 lowercase)
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!formData.password) {
-      errors.password = ["Password is required."];
-    } else if (!passwordRegex.test(formData.password)) {
-      errors.password = [
-        "Password must be at least 8 characters long, with 1 uppercase letter, 1 lowercase letter, and 1 number.",
-      ];
-    }
-
-    // User Type validation (already handled with default value but can be extended)
-    if (!formData.user_type) {
-      errors.user_type = ["User type is required."];
-    }
-
-    setErrorMessages(errors);
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    handleValidation(name as keyof FormData, value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSuccessMessage(null);
-
-    // Perform final validation check before submission
-    validateForm();
-
-    if (Object.keys(errorMessages || {}).length > 0) {
-      setIsSubmitting(false);
-      return; // If there are any errors, don't proceed with submission
-    }
+    setIsSubmitting(true);
 
     try {
-      const response = await axios.post<ApiResponse>("/register/", formData);
+      const response = await axios.post("http://127.0.0.1:8000/users/register/", formData);
       setSuccessMessage(response.data.message);
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        user_type: "buyer",
-      });
+
+      if (formData.user_type === "buyer") {
+        navigate("/activate", { state: { email: formData.email } });
+      } else {
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          user_type: "buyer",
+        });
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiError>;
@@ -130,7 +147,7 @@ const RegisterForm: React.FC = () => {
           required
           className="form-control"
         />
-        {errorMessages?.username && (
+        {errorMessages.username && (
           <div className="text-danger">{errorMessages.username.join(", ")}</div>
         )}
       </div>
@@ -148,7 +165,7 @@ const RegisterForm: React.FC = () => {
           required
           className="form-control"
         />
-        {errorMessages?.email && (
+        {errorMessages.email && (
           <div className="text-danger">{errorMessages.email.join(", ")}</div>
         )}
       </div>
@@ -166,7 +183,7 @@ const RegisterForm: React.FC = () => {
           required
           className="form-control"
         />
-        {errorMessages?.password && (
+        {errorMessages.password && (
           <div className="text-danger">{errorMessages.password.join(", ")}</div>
         )}
       </div>
@@ -185,7 +202,7 @@ const RegisterForm: React.FC = () => {
           <option value="buyer">Buyer</option>
           <option value="seller">Seller</option>
         </select>
-        {errorMessages?.user_type && (
+        {errorMessages.user_type && (
           <div className="text-danger">
             {errorMessages.user_type.join(", ")}
           </div>
@@ -196,13 +213,9 @@ const RegisterForm: React.FC = () => {
         {isSubmitting ? "Submitting..." : "Register"}
       </button>
 
-      {successMessage && (
-        <div className="text-success mt-3">{successMessage}</div>
-      )}
-      {errorMessages?.general && (
-        <div className="text-danger mt-3">
-          {errorMessages.general.join(", ")}
-        </div>
+      {successMessage && <div className="text-success mt-3">{successMessage}</div>}
+      {errorMessages.general && (
+        <div className="text-danger mt-3">{errorMessages.general.join(", ")}</div>
       )}
     </form>
   );
