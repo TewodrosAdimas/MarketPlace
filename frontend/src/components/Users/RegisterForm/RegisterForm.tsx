@@ -103,18 +103,18 @@ const RegisterForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/users/register/", formData);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/users/register/",
+        formData
+      );
       setSuccessMessage(response.data.message);
 
       if (formData.user_type === "buyer") {
+        // Redirect buyer to activation page
         navigate("/activate", { state: { email: formData.email } });
       } else {
-        setFormData({
-          username: "",
-          email: "",
-          password: "",
-          user_type: "buyer",
-        });
+        // Redirect seller directly to login page
+        navigate("/login");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -213,9 +213,13 @@ const RegisterForm: React.FC = () => {
         {isSubmitting ? "Submitting..." : "Register"}
       </button>
 
-      {successMessage && <div className="text-success mt-3">{successMessage}</div>}
+      {successMessage && (
+        <div className="text-success mt-3">{successMessage}</div>
+      )}
       {errorMessages.general && (
-        <div className="text-danger mt-3">{errorMessages.general.join(", ")}</div>
+        <div className="text-danger mt-3">
+          {errorMessages.general.join(", ")}
+        </div>
       )}
     </form>
   );
