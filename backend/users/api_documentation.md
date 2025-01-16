@@ -47,6 +47,7 @@ Registers a new user as either a **seller** or **buyer**. For sellers, the accou
 
 #### **Description**:
 
+
 Logs in a user using **email** and **password**, and returns JWT tokens (`access` and `refresh` tokens).
 
 #### **Request**:

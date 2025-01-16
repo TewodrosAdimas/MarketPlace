@@ -5,7 +5,7 @@ from .models import Product
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsSellerOrReadOnly
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class ProductListView(APIView):
     """
@@ -19,38 +19,40 @@ class ProductListView(APIView):
         """
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data) 
 
 
 class ProductCreateView(APIView):
-    permission_classes = [
-        IsAuthenticated
-    ]  # Only authenticated users can create products
+    permission_classes = [IsAuthenticated]  # Only authenticated users can create products
+    parser_classes = [MultiPartParser, FormParser]  # Support file uploads
 
     def post(self, request):
-        if request.user.is_authenticated:  # Check if the user is authenticated
-            if request.user.user_type != "seller":  # Only sellers can create products
-                return Response(
-                    {"detail": "Only sellers can create products."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
-            # Add the user to the request data
-            request.data["user"] = (
-                request.user.id
-            )  # Attach the user to the product data
-
-            # Create the product
-            serializer = ProductSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()  # Save the product with the user attached
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
+        if not request.user.is_authenticated:  # Check if the user is authenticated
             return Response(
                 {"detail": "Authentication credentials were not provided."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+        
+        if request.user.user_type != "seller":  # Only sellers can create products
+            return Response(
+                {"detail": "Only sellers can create products."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        data = request.data.copy()  # Make a mutable copy
+        data["user"] = request.user.id  # Attach the user to the product data
+
+        # Create the product
+        serializer = ProductSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()  # Save the product with the user and image file
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        def create(self, validated_data):
+        # Ensure the file is saved properly
+    
+            return Product.objects.create(**validated_data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProductUpdateView(APIView):

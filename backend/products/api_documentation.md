@@ -29,6 +29,7 @@ Fetches a list of all available products.
 ]
 ```
 
+
 ---
 
 ### 2. **Create Product**  
@@ -106,6 +107,7 @@ Update a specific product by ID (only for the owner/seller).
 
 **Request Body Example:**
 ```json
+
 {
     "name": "Updated Product",
     "description": "Updated description of product",

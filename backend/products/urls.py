@@ -1,4 +1,7 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+
 from .views import (
     ProductListView,
     ProductCreateView,
@@ -21,4 +24,11 @@ urlpatterns = [
     path(
         "<int:product_id>/delete/", ProductDeleteView.as_view(), name="delete-product"
     ),  # New URL for deleting product
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

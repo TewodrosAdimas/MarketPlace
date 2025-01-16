@@ -12,7 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
             "price",
             "category",
             "stock_quantity",
-            "image_url",
+            "image",
             "created_at",
             "user",
         ]
