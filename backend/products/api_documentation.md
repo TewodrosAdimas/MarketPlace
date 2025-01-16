@@ -76,6 +76,7 @@ Create a new product (only accessible to sellers).
 **Description:**  
 Fetch the details of a specific product by ID.
 
+
 **Permissions:**  
 - Public access (No authentication required)
 
