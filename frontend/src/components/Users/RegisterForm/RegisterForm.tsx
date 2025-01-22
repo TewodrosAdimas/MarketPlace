@@ -27,9 +27,7 @@ const RegisterForm: React.FC = () => {
   const [errorMessages, setErrorMessages] = useState<ApiError>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const navigate = useNavigate();
-
   const validateUsername = (username: string) => {
     if (!username.trim()) {
       return "Username is required.";

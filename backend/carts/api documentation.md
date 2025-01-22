@@ -1,6 +1,3 @@
-To test the cart feature using Postman, you can follow the steps below:
-
----
 
 ### **1. Setup Postman Environment**
 
@@ -40,6 +37,7 @@ To test the cart feature using Postman, you can follow the steps below:
 ```
 
 ---
+
 
 #### **2.2. Add to Cart**
 

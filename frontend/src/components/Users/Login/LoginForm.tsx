@@ -25,17 +25,20 @@ const LoginForm: React.FC = () => {
     setErrorMessages(null);
 
     try {
-      const response = await axios.post<ApiResponse>("http://127.0.0.1:8000/users/login/", {
-        email,
-        password,
-      });
-      
+      const response = await axios.post<ApiResponse>(
+        "http://127.0.0.1:8000/users/login/",
+        {
+          email,
+          password,
+        }
+      );
+
       // Storing JWT tokens in localStorage
       localStorage.setItem("access_token", response.data.access);
       localStorage.setItem("refresh_token", response.data.refresh);
-      
-      // Redirect user after successful login (you can route them to dashboard or home)
-      navigate("/dashboard");  // Change route as per your needs
+
+      // Redirect user after successful login to product list page
+      navigate("/products");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiError>;
@@ -85,7 +88,11 @@ const LoginForm: React.FC = () => {
           />
         </div>
 
-        <button type="submit" disabled={isSubmitting} className="btn btn-primary">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="btn btn-primary"
+        >
           {isSubmitting ? "Logging in..." : "Login"}
         </button>
 
