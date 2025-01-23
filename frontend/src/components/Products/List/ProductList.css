@@ -1,52 +1,235 @@
-.product-list-container {
-    padding: 20px;
+/* General Container Styling */
+.container {
     max-width: 1200px;
-    margin: auto;
+    margin: 0 auto;
+    padding: 30px;
   }
   
-  .error-message {
-    color: red;
+  /* Title Styling */
+  h2.text-center {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+  
+  /* Success Message */
+  .text-success {
     font-size: 1.2rem;
+    color: #28a745;
+    margin-bottom: 30px;
+    font-weight: bold;
   }
   
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  
-  .product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
+  /* Card Styling */
+  .card {
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    padding: 10px;
-    text-align: center;
+    position: relative;
+    background-color: #ffffff;
   }
   
-  .product-card img {
-    width: 100%;
-    height: 200px;
+  .card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    border: 1px solid #007bff;
+  }
+  
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  
+  /* Card Image Styling */
+  .card-img-top {
     object-fit: cover;
-    border-radius: 4px;
+    height: 220px;
+    transition: transform 0.5s ease;
   }
   
-  .product-details {
-    padding: 10px 0;
+  .card-img-top:hover {
+    transform: scale(1.1);
   }
   
-  .product-details h3 {
+  .placeholder-image {
+    height: 220px;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
     font-size: 1.2rem;
-    color: #333;
   }
   
-  .product-details p {
+  /* Product Title Styling */
+  .card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    transition: color 0.3s ease;
+  }
+  
+  .card-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .card-title a:hover {
+    color: #007bff;
+  }
+  
+  /* Product Description */
+  .card-text {
     font-size: 1rem;
-    color: #666;
+    color: #555;
+    margin-bottom: 20px;
+    line-height: 1.5;
   }
   
-  .product-details strong {
-    color: #333;
+  /* Price Styling */
+  .text-primary {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #28a745;
+    margin-bottom: 15px;
+  }
+  
+  /* Stock Information */
+  .text-secondary {
+    font-size: 1rem;
+    color: #888;
+  }
+  
+  /* Add to Cart Section */
+  .input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .form-control {
+    max-width: 80px;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    transition: border-color 0.3s ease;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  .btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Hover Animations */
+  .card:hover .card-title {
+    color: #007bff;
+  }
+  
+  .card:hover .card-img-top {
+    transform: scale(1.1);
+  }
+  
+  /* Responsive Layout for Product Cards */
+  @media (max-width: 768px) {
+    .row {
+      flex-direction: column;
+    }
+  
+    .col-sm-6 {
+      width: 100%;
+      margin-bottom: 30px;
+    }
+  }
+  
+  @media (min-width: 768px) and (max-width: 992px) {
+    .col-md-3 {
+      width: 45%;
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .col-md-3 {
+      width: 22%;
+    }
+  }
+  
+  /* Custom Spacing for Layout */
+  .mb-4 {
+    margin-bottom: 2rem;
+  }
+  
+  .mt-auto {
+    margin-top: auto;
+  }
+  
+  /* Special hover effect for Add to Cart button */
+  .input-group .btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+  }
+  
+  /* Style for empty cart message */
+  .text-danger {
+    color: #dc3545;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    padding: 12px 15px;
+    font-size: 1.3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Space between the icon and any text (optional) */
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .btn-primary i {
+    font-size: 1.5rem; /* Icon size */
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+  
+  .btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
   

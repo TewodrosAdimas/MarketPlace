@@ -24,21 +24,49 @@ const ViewCarts: React.FC = () => {
   const [cartData, setCartData] = useState<CartData | null>(null);
   const [message, setMessage] = useState<string>("");
 
-  useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const response = await axios.get(`${API_BASE_URL}/carts/`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        });
-        setCartData(response.data);
-      } catch (error) {
-        console.error("Error fetching cart data:", error);
-        setMessage("Failed to load cart data. Please try again later.");
-      }
-    };
+  // Fetch cart data
+  const fetchCartData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/carts/`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+      setCartData(response.data);
+    } catch (error) {
+      console.error("Error fetching cart data:", error);
+      setMessage("Failed to load cart data. Please try again later.");
+    }
+  };
 
+  // Remove item from cart
+  const handleRemoveFromCart = async (cartItemId: number) => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setMessage("You must be logged in to remove an item from the cart.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `${API_BASE_URL}/carts/remove/${cartItemId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setMessage(response.data.detail || "Item removed from cart.");
+      // Refresh cart data after removal
+      fetchCartData();
+    } catch (error: any) {
+      setMessage(
+        error.response?.data?.detail || "Failed to remove product from cart."
+      );
+    }
+  };
+
+  useEffect(() => {
     fetchCartData();
   }, []);
 
@@ -55,7 +83,13 @@ const ViewCarts: React.FC = () => {
                 <p>{item.product.description}</p>
                 <p>Price: ${item.product.price}</p>
                 <p>Quantity: {item.quantity}</p>
-                <p>Subtotal: ${(parseFloat(item.product.price) * item.quantity).toFixed(2)}</p>
+                <p>
+                  Subtotal: $
+                  {(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                </p>
+                <button onClick={() => handleRemoveFromCart(item.id)}>
+                  Remove from Cart
+                </button>
               </li>
             ))}
           </ul>
